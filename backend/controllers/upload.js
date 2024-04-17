@@ -6,7 +6,7 @@ const GridFSBucket = require("mongodb").GridFSBucket;
 
 const url = dbConfig.url;
 
-const baseUrl = "https://iec-server.onrender.com/files";
+const baseUrl = "https://iec-server.onrender.com/files/";
 
 const mongoClient = new MongoClient(url);
 
