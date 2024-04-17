@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Node.js upload images</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <style>
+      /* Custom CSS */
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .content {
+        margin-top: 50px;
+      }
+      .card {
+        margin-bottom: 20px;
+      }
+      .card-body {
+        text-align: center;
+      }
+      .preview-images img {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+      }
+      .notices .notice {
+        margin-bottom: 10px;
+      }
+      .logo{
+        height: 18vh;
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div >
+      <div class="header">
+        <img class="logo" src="https://res.cloudinary.com/dcajmncr4/image/upload/v1713315109/logo_jfetvu.jpg" />
+        <p style="background-color: gray;"><strong>ECE DEPARTMENT</strong></p>
+      </div>
+
+
+      <div class="container">
+        <div class="row">
+           <!-- Image Upload Section -->
+      <div class="col-6 content">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Upload Photos</h4>
+            <form action="/upload" method="POST" enctype="multipart/form-data">
+              <div class="form-group">
+                <input type="file" name="file" id="input-files" class="form-control-file border">
+              </div>
+              <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+          </div>
+        </div>
+        <div class="preview-images"></div>
+      </div>
+      
+      <!-- Notices Section -->
+      <div class="col-6 content">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Notices</h4>
+            <div class="form-group">
+              <input type="text" class="form-control" id="notice-text" placeholder="Write a notice ">
+            </div>
+            <button type="button" id="post-notice" class="btn btn-primary">Post Notice</button>
+          </div>
+        </div>
+        <div class="notices"></div>
+      </div>
+
+        </div>
+      </div>
+
+      
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        // Function to preview uploaded images
+        let imagesPreview = function(input, placeToInsertImagePreview) {
+          if (input.files) {
+            let filesAmount = input.files.length;
+            for (i = 0; i < filesAmount; i++) {
+              let reader = new FileReader();
+              reader.onload = function(event) {
+                $($.parseHTML("<img>"))
+                  .attr("src", event.target.result)
+                  .appendTo(placeToInsertImagePreview);
+              };
+              reader.readAsDataURL(input.files[i]);
+            }
+          }
+        };
+        
+        // Image upload preview
+        $("#input-files").on("change", function() {
+          imagesPreview(this, ".preview-images");
+        });
+        
+        // Notice posting functionality
+        $("#post-notice").on("click", function() {
+          let noticeText = $("#notice-text").val();
+          if (noticeText.trim() !== "") {
+              $.ajax({
+                type: "POST",
+                url: "/post_notice", // Endpoint for posting notice
+                data: { notice: noticeText },
+                success: function(response) {
+                  alert("Notice posted successfully");
+                  window.location.reload(); // Reload the page
+                },
+                error: function(xhr, status, error) {
+                  console.error(xhr.responseText);
+                }
+              });
+          } else {
+            alert("Please enter notice text before posting.");
+          }
+  });
+      });
+      
+
+    </script>
+  </body>
+</html>
